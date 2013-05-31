@@ -25,3 +25,7 @@ META-INF/
 ## Ignore all *.properties file, EXCEPT build.properties (the default)
 *.properties
 !build.properties
+.DS_Store
+dspace/.DS_Store
+dspace/config/.DS_Store
+dspace/src/.DS_Store
