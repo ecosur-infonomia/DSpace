@@ -5,6 +5,15 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import org.dspace.authorize.AuthorizeException;
@@ -28,26 +37,6 @@ import java.util.List;
 
 public class BinaryContentIngester extends AbstractSwordContentIngester
 {
-	public DepositResult ingest(Context context, Deposit deposit, DSpaceObject dso, VerboseDescription verboseDescription)
-			throws DSpaceSwordException, SwordError, SwordAuthException, SwordServerException
-	{
-		return this.ingest(context, deposit, dso, verboseDescription, null);
-	}
-
-	public DepositResult ingest(Context context, Deposit deposit, DSpaceObject dso, VerboseDescription verboseDescription, DepositResult result)
-			throws DSpaceSwordException, SwordError, SwordAuthException, SwordServerException
-	{
-		if (dso instanceof Collection)
-		{
-			return this.ingestToCollection(context, deposit, (Collection) dso, verboseDescription, result);
-		}
-		else if (dso instanceof Item)
-		{
-			return this.ingestToItem(context, deposit, (Item) dso, verboseDescription, result);
-		}
-		return null;
-	}
-
 	public DepositResult ingestToCollection(Context context, Deposit deposit, Collection collection, VerboseDescription verboseDescription, DepositResult result)
 			throws DSpaceSwordException, SwordError, SwordAuthException, SwordServerException
 	{
@@ -79,7 +68,7 @@ public class BinaryContentIngester extends AbstractSwordContentIngester
 
 			// now we have an item in the workspace, and we need to consider adding some metadata to it,
 			// but since the binary file didn't contain anything, what do we do?
-			item.addMetadata("dc", "title", null, null, "Unititled: " + deposit.getFilename());
+			item.addMetadata("dc", "title", null, null, "Untitled: " + deposit.getFilename());
 			item.addMetadata("dc", "description", null, null, "Zip file deposted by SWORD without accompanying metadata");
 
 			// update the item metadata to inclue the current time as
@@ -145,7 +134,9 @@ public class BinaryContentIngester extends AbstractSwordContentIngester
 				original = item.createBundle("ORIGINAL");
 			}
 
-			Bitstream bs = item.createSingleBitstream(deposit.getInputStream());
+            Bitstream bs = original.createBitstream(deposit.getInputStream());
+            BitstreamFormat format = this.getFormat(context, deposit.getFilename());
+            bs.setFormat(format);
 			bs.setName(deposit.getFilename());
 			bs.update();
 

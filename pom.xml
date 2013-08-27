@@ -125,6 +125,7 @@
                 <configuration>
                     <!-- License header file (can be a URL, but that's less stable if external site is down on occasion) -->
                     <header>${root.basedir}/LICENSE_HEADER</header>
+                    <aggregate>true</aggregate>
                     <!--Just check headers of everything in the /src directory -->
                     <includes>
                         <include>src/**</include>

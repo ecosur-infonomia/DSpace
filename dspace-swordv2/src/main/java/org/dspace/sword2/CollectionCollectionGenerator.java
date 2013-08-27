@@ -5,6 +5,15 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import org.apache.abdera.i18n.iri.IRI;
@@ -28,10 +37,10 @@ public class CollectionCollectionGenerator implements AtomCollectionGenerator
 	private static Logger log = Logger.getLogger(CommunityCollectionGenerator.class);
 
 	/**
-	 * Build the collection for the given DSpaceObject.  In this
-	 * implementation, if the object is not a DSpace Collection, it will
-	 * throw an exception.
+	 * Build the collection for the given DSpaceObject.  In this implementation,
+	 * if the object is not a DSpace COllection, it will throw an exception
 	 * @param dso
+	 * @return
 	 * @throws DSpaceSwordException
 	 */
 	public SwordCollection buildCollection(Context context, DSpaceObject dso, SwordConfigurationDSpace swordConfig)

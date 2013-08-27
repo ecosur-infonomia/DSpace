@@ -5,6 +5,15 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 
@@ -46,6 +55,10 @@ public class CollectionListManagerDSpace extends DSpaceSwordAPI implements Colle
 			SwordUrlManager urlManager = config.getUrlManager(context, config);
 
 			Collection collection = urlManager.getCollection(context, colIRI.toString());
+            if (collection == null)
+            {
+                throw new SwordError(404);
+            }
 
 			List<Item> items = this.listItems(sc, collection, swordConfig);
 			Feed feed = this.itemListToFeed(sc, items, swordConfig);

@@ -5,6 +5,15 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import org.apache.log4j.Logger;
@@ -76,6 +85,10 @@ public class CollectionDepositManagerDSpace extends DSpaceSwordAPI implements Co
 
 			// get the deposit target
 			Collection collection = this.getDepositTarget(context, collectionUri, config);
+            if (collection == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// Ensure that this method is allowed
 			WorkflowManager wfm = WorkflowManagerFactory.getInstance();
@@ -185,7 +198,7 @@ public class CollectionDepositManagerDSpace extends DSpaceSwordAPI implements Co
 			long delta = finish.getTime() - start.getTime();
 
 			this.verboseDescription.append("Total time for deposit processing: " + delta + " ms");
-			receipt.setVerboseDescription(this.verboseDescription.toString());
+            this.addVerboseDescription(receipt, this.verboseDescription);
 
 			// if something hasn't killed it already (allowed), then complete the transaction
 			sc.commit();
@@ -303,6 +316,10 @@ public class CollectionDepositManagerDSpace extends DSpaceSwordAPI implements Co
 
 		// get the target collection
 		Collection collection = urlManager.getCollection(context, depositUrl);
+        if (collection == null)
+        {
+            throw new SwordError(404);
+        }
 
 		this.verboseDescription.append("Performing deposit using deposit URL: " + depositUrl);
 

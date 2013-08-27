@@ -96,7 +96,12 @@
             </exclusion>
          </exclusions>
       </dependency>
-
+      <!-- Introduce the Affiliation ingestor -->
+     <dependency>
+      <groupId>mx.ecosur.infonomia.dspace</groupId>
+      <artifactId>AffiliatingIngester</artifactId>
+      <version>1.0-SNAPSHOT</version>
+     </dependency>
    </dependencies>
 
 </project>

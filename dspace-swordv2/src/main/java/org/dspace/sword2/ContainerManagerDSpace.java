@@ -5,16 +5,27 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import org.apache.log4j.Logger;
 import org.dspace.authorize.AuthorizeException;
+import org.dspace.authorize.AuthorizeManager;
 import org.dspace.content.Collection;
-import org.dspace.content.InProgressSubmission;
 import org.dspace.content.Item;
 import org.dspace.content.WorkspaceItem;
+import org.dspace.core.Constants;
 import org.dspace.core.Context;
 import org.dspace.core.LogManager;
+import org.dspace.workflow.WorkflowItem;
 import org.swordapp.server.AuthCredentials;
 import org.swordapp.server.ContainerManager;
 import org.swordapp.server.Deposit;
@@ -92,11 +103,27 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 			SwordUrlManager urlManager = config.getUrlManager(context, config);
 
 			Item item = urlManager.getItem(context, editIRI);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
+
+            // we can't give back an entry unless the user is authorised to retrieve it
+            AuthorizeManager.authorizeAction(context, item, Constants.READ);
 
 			ReceiptGenerator genny = new ReceiptGenerator();
 			DepositReceipt receipt = genny.createReceipt(context, item, config);
+			sc.abort();
 			return receipt;
 		}
+        catch (AuthorizeException e)
+        {
+            throw new SwordAuthException();
+        }
+        catch (SQLException e)
+        {
+            throw new SwordServerException(e);
+        }
 		catch (DSpaceSwordException e)
 		{
 			throw new SwordServerException(e);
@@ -135,6 +162,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
             // get the deposit target
             Item item = this.getDSpaceTarget(context, editIRI, config);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// now we have the deposit target, we can determine whether this operation is allowed
 			// at all
@@ -210,7 +241,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
             long delta = finish.getTime() - start.getTime();
 
             this.verboseDescription.append("Total time for deposit processing: " + delta + " ms");
-            receipt.setVerboseDescription(this.verboseDescription.toString());
+            this.addVerboseDescription(receipt, this.verboseDescription);
 
             // if something hasn't killed it already (allowed), then complete the transaction
             sc.commit();
@@ -258,6 +289,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
 			// get the deposit target
             Item item = this.getDSpaceTarget(context, editIRI, config);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// Ensure that this method is allowed
 			WorkflowManager wfm = WorkflowManagerFactory.getInstance();
@@ -334,7 +369,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 			long delta = finish.getTime() - start.getTime();
 
 			this.verboseDescription.append("Total time for deposit processing: " + delta + " ms");
-			receipt.setVerboseDescription(this.verboseDescription.toString());
+            this.addVerboseDescription(receipt, this.verboseDescription);
 
 			// if something hasn't killed it already (allowed), then complete the transaction
 			sc.commit();
@@ -359,7 +394,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 	public DepositReceipt addMetadataAndResources(String s, Deposit deposit, AuthCredentials authCredentials, SwordConfiguration config)
 			throws SwordError, SwordServerException
 	{
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+		return null;
 	}
 
 	public DepositReceipt addMetadata(String editIRI, Deposit deposit, AuthCredentials authCredentials, SwordConfiguration swordConfig)
@@ -386,6 +421,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
             // get the deposit target
             Item item = this.getDSpaceTarget(context, editIRI, config);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// now we have the deposit target, we can determine whether this operation is allowed
 			// at all
@@ -461,7 +500,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
             long delta = finish.getTime() - start.getTime();
 
             this.verboseDescription.append("Total time for deposit processing: " + delta + " ms");
-            receipt.setVerboseDescription(this.verboseDescription.toString());
+            this.addVerboseDescription(receipt, this.verboseDescription);
 
             // if something hasn't killed it already (allowed), then complete the transaction
             sc.commit();
@@ -486,7 +525,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 	public DepositReceipt addResources(String s, Deposit deposit, AuthCredentials authCredentials, SwordConfiguration config)
 			throws SwordError, SwordServerException
 	{
-		return null;  //To change body of implemented methods use File | Settings | File Templates.
+		return null;
 	}
 
 	public void deleteContainer(String editIRI, AuthCredentials authCredentials, SwordConfiguration swordConfig)
@@ -513,6 +552,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
             // get the deposit target
             Item item = this.getDSpaceTarget(context, editIRI, config);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// now we have the deposit target, we can determine whether this operation is allowed
 			// at all
@@ -591,6 +634,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
             // get the deposit target
             Item item = this.getDSpaceTarget(context, editIRI, config);
+            if (item == null)
+            {
+                throw new SwordError(404);
+            }
 
 			// now we have the deposit target, we can determine whether this operation is allowed
 			// at all
@@ -634,7 +681,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
             long delta = finish.getTime() - start.getTime();
 
             this.verboseDescription.append("Total time for modify processing: " + delta + " ms");
-            receipt.setVerboseDescription(this.verboseDescription.toString());
+            this.addVerboseDescription(receipt, this.verboseDescription);
 
             // if something hasn't killed it already (allowed), then complete the transaction
             sc.commit();
@@ -679,7 +726,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 			// delegate the to the version manager to get rid of any existing content and to version
 			// if if necessary
 			VersionManager vm = new VersionManager();
-			vm.emptyBundle(item, "ORIGINAL");
+			vm.removeBundle(item, "ORIGINAL");
 		}
 		catch (SQLException e)
 		{
@@ -790,7 +837,7 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 			}
 			else if (wft.isItemInWorkflow(context, item))
 			{
-				InProgressSubmission wfi = wft.getWorkflowItem(context, item);
+				WorkflowItem wfi = wft.getWorkflowItem(context, item);
 				wfi.deleteWrapper();
 			}
 
@@ -822,6 +869,10 @@ public class ContainerManagerDSpace extends DSpaceSwordAPI implements ContainerM
 
 		// get the target collection
 		Item item = urlManager.getItem(context, editUrl);
+        if (item == null)
+        {
+            throw new SwordError(404);
+        }
 
 		this.verboseDescription.append("Performing replace using edit-media URL: " + editUrl);
         this.verboseDescription.append("Location resolves to item with handle: " + item.getHandle());

@@ -5,11 +5,21 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import org.dspace.core.PluginManager;
 import org.swordapp.server.SwordError;
 import org.swordapp.server.SwordServerException;
+import org.swordapp.server.UriRegistry;
 
 import java.util.List;
 import java.util.Map;
@@ -89,7 +99,7 @@ public class SwordDisseminatorFactory
 
             if (disseminator == null)
             {
-                throw new SwordError(DSpaceUriRegistry.NOT_ACCEPTABLE, 406, "No plugin can disseminate the requested formats");
+                throw new SwordError(UriRegistry.ERROR_CONTENT, 406, "No plugin can disseminate the requested formats");
             }
 
             disseminator.setPackaging(acceptPackaging);
@@ -126,7 +136,7 @@ public class SwordDisseminatorFactory
 
 		if (disseminator == null)
 		{
-			throw new SwordError(DSpaceUriRegistry.NOT_ACCEPTABLE, 406, "No plugin can disseminate the requested formats");
+			throw new SwordError(UriRegistry.ERROR_CONTENT, 406, "No plugin can disseminate the requested formats");
 		}
 
 		return disseminator;

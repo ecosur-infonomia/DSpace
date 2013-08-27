@@ -5,6 +5,15 @@
  *
  * http://www.dspace.org/license/
  */
+/**
+ * <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+ * <html><head>
+ * <title>301 Moved Permanently</title>
+ * </head><body>
+ * <h1>Moved Permanently</h1>
+ * <p>The document has moved <a href="https://svn.duraspace.org/dspace/licenses/LICENSE_HEADER">here</a>.</p>
+ * </body></html>
+ */
 package org.dspace.sword2;
 
 import java.sql.SQLException;
@@ -84,7 +93,9 @@ public class SwordContext
 	/**
 	 * Returns the most appropriate context for operations on the
 	 * database.  This is the on-behalf-of user's context if the
-	 * user exists, or the authenticated user's context otherwise.
+	 * user exists, or the authenticated user's context otherwise
+	 *
+	 * @return
 	 */
 	public Context getContext()
 	{
@@ -104,6 +115,8 @@ public class SwordContext
 	 * getContext()
 	 *
 	 * on this class instead.
+	 *
+	 * @return
 	 */
 	public Context getAuthenticatorContext()
 	{
@@ -123,6 +136,8 @@ public class SwordContext
 	 *
 	 * on this class instead.  If there is no on-behalf-of user, this
 	 * method will return null.
+	 *
+	 * @return
 	 */
 	public Context getOnBehalfOfContext()
 	{

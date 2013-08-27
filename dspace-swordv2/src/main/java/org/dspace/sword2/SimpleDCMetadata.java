@@ -16,32 +16,31 @@
  */
 package org.dspace.sword2;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
-public class VerboseDescription
+public class SimpleDCMetadata
 {
-    private StringBuilder sb;
+    private Map<String, String> dublinCore = new HashMap<String, String>();
+    private Map<String, String> atom = new HashMap<String, String>();
 
-    public VerboseDescription()
+    public void addDublinCore(String element, String value)
     {
-        this.sb = new StringBuilder();
+        this.dublinCore.put(element, value);
     }
 
-    public VerboseDescription append(String s)
+    public void addAtom(String element, String value)
     {
-        this.sb.append(this.getDatePrefix() + s + "\n");
-        return this;
+        this.atom.put(element, value);
     }
 
-    public String toString()
+    public Map<String, String> getDublinCore()
     {
-        return this.sb.toString();
+        return dublinCore;
     }
 
-    private String getDatePrefix()
+    public Map<String, String> getAtom()
     {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        return "[" + sdf.format(new Date()) + "] ";
+        return atom;
     }
 }
